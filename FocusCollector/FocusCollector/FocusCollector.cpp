@@ -8,6 +8,7 @@
 #include <time.h>
 
 #define MAX_LOADSTRING 100
+#pragma warning(disable:4996)
 
 // 전역 변수:
 HINSTANCE hInst;                                // 현재 인스턴스입니다.
@@ -131,6 +132,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     time_t mytime;
     static HANDLE hTimer;
     static char* str;
+    //HINSTANCE hI;
+    FOCUSINFO fInfo;
 
     switch (message)
     {
@@ -160,8 +163,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             hdc = BeginPaint(hWnd, &ps);
             // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다...
-            LPCWSTR route = GetCurrExeName();
-            TextOut(hdc, 100, 100, route, MAX_PATH);
+
+            GetCurrExeInfo(&fInfo);
+
+            RECT rt = { 100, 100, 500, 300 };
+            wchar_t outText[MAX_PATH] = L"fPath : ";
+            char tmp[MAX_PATH];
+
+            wcscat(outText,fInfo.fPath);
+            wcscat(outText, L"\nappname : ");
+            wcscat(outText, fInfo.appName);
+            wcscat(outText, L"\nWinTitle : ");
+            wcscat(outText, fInfo.windowTitle);
+            wcscat(outText, L"\nDateTime : ");
+            wcscat(outText, fInfo.datetime);
+            DrawText(hdc, outText, -1, &rt, DT_WORDBREAK | DT_NOCLIP);
+            DrawIcon(hdc, 10, 20, fInfo.hIcon);
+            
             EndPaint(hWnd, &ps);
         }
         break;
