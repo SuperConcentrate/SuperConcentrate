@@ -164,7 +164,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             hdc = BeginPaint(hWnd, &ps);
             // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다...
 
-            GetCurrExeInfo(&fInfo);
+            if (GetCurrExeInfo(&fInfo) == 0)
+                break;
 
             RECT rt = { 100, 100, 500, 300 };
             wchar_t outText[MAX_PATH] = L"fPath : ";
@@ -174,7 +175,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             wcscat(outText, L"\nappname : ");
             wcscat(outText, fInfo.appName);
             wcscat(outText, L"\nWinTitle : ");
-            wcscat(outText, fInfo.windowTitle);
+            if (fInfo.windowTitle != (LPCWSTR)0xCCCCCCCC) {
+                wcscat(outText, fInfo.windowTitle);
+            }
+            else
+            {
+                wcscat(outText, L"NO_DATA");
+            }
             wcscat(outText, L"\nDateTime : ");
             wcscat(outText, fInfo.datetime);
             DrawText(hdc, outText, -1, &rt, DT_WORDBREAK | DT_NOCLIP);

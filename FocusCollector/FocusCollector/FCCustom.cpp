@@ -74,13 +74,14 @@ int GetCurrExeInfo(FOCUSINFO* fInfo) {
 	fInfo->hIcon = sfi.hIcon;
 	fInfo->appName = sfi.szDisplayName;
 
+	// 0xCCCCCCCC 이유 아마 Ret0 잡혀서 넘어가서 그런듯?
 	if (dwRC ==0 )
 		return 0;
 
 	//Window Title 추출 루틴
 	wchar_t wTitle[100];
 	//버퍼 오버런 가능성
-	GetWindowTextW(handleFocused, wTitle, sizeof(wTitle));
+	GetWindowTextW(handleFocused, wTitle, sizeof(wTitle)/2);
 	fInfo->windowTitle = wTitle;
 
 	char timestamp[16];
@@ -89,5 +90,6 @@ int GetCurrExeInfo(FOCUSINFO* fInfo) {
 	charToWChar(timestamp, datetime);
 	fInfo->datetime = datetime;
 
+	//Stack around the variable 'wTitle' was corrupted. => 버퍼오버런 (/2로 해결)
 	return 1;
 }
